@@ -27,12 +27,12 @@ namespace KHAS {
 		/// <summary>
 		/// 
 		/// </summary>
-		static std::stack<value_type> buffer_;
+		static inline std::stack<value_type> buffer_{};
 
 		/// <summary>
 		/// 
 		/// </summary>
-		static inline size_t fieldWidth{ 120 };
+		static inline size_t fieldWidth_{ 120 };
 
 		/// <summary>
 		/// 
@@ -55,9 +55,18 @@ namespace KHAS {
 		/// <summary>
 		/// 
 		/// </summary>
-		template <typename ...Args>
-		static bool isValidity(Args&& ... args);
+		template <typename First, typename ...Rest>
+		static bool isValidity(const First& str, const Rest& ... rest);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		static bool isValidity() { return false;  }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		static void initMenu();
 
 	protected:
 
@@ -75,6 +84,11 @@ namespace KHAS {
 		/// 
 		/// </summary>
 		explicit Interface();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void show();
 
 
 	};
@@ -100,15 +114,15 @@ namespace KHAS {
 		::push(Args&&... args) {
 
 		constexpr bool isSame{ (std::is_same_v<Args
-		, KHAS::Interface::bufferType> && ...) };
+		, KHAS::Interface::value_type> && ...) };
 		/// ¬ходные типы не соответствуют типу базы
 		static_assert(isSame, "Input types do not match base type!");
 
+		assert(isValidity(args...));
 
+		(buffer_.push(std::forward<Args>(args)), ...);
 
 	}
-
-
 
 	template <typename ...Args>
 	Interface::value_type Interface
@@ -119,13 +133,11 @@ namespace KHAS {
 		/// ¬ходные типы не соответствуют типу базы
 		static_assert(isSame, "Input types do not match base type!");
 
-		isValidity(args...);
-
 		std::stringstream ss;
 		(ss  <<  ... << addLineTranslation(std::forward<Args>(args)));
 		std::cout << ss.str();
 
-		return value_type();
+		return ss.str();
 	}
 
 	template<typename OutType, typename T2>
@@ -138,10 +150,10 @@ namespace KHAS {
 		return std::forward<OutType>(str) + "\n";
 	}
 
-
-	template <typename ...Args>
-	static bool Interface
-		::isValidity(Args&& ... args) {
-
+	template<typename First, typename ...Rest>
+	inline bool Interface::isValidity(const First& str, const Rest & ...rest)
+	{
+		if constexpr (sizeof...(Rest) == 0) return true;
+		return (str.size() <= (fieldWidth_ - 6)) && isValidity(rest...);
 	}
 }
