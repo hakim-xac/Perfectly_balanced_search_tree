@@ -1,5 +1,5 @@
 ﻿#include "Perfectly_balanced_search_tree.h"
-#include "Interface.h"
+#include "TaskExecution.h"
 
 int main()
 {
@@ -7,7 +7,8 @@ int main()
 
 	setlocale(LC_ALL, "Russian");
 
-	Interface window;
+	TaskExecution task;
+	task.print100();
 
 	return 0;
 }

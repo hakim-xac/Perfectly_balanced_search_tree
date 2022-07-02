@@ -8,7 +8,7 @@ namespace KHAS {
 		using namespace std::literals;
 		push(delimiter('='));
 		push(bufferItem("Лабораторная работа:"s, "номер 1"s));
-		push(bufferItem("Тема:"s, "Идеально сбалансированное дерево поиска"s));
+		push(bufferItem("Тема:"s, "ИСДП и СДП"s));
 		push(delimiter('-'));
 		push(bufferItem("Выполнил студент:"s, "Хакимов А.С."s));
 		push(delimiter('='));
