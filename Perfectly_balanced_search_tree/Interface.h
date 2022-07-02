@@ -1,7 +1,8 @@
 #pragma once
 #include <iostream>
+#include <iomanip>
 #include <sstream>
-#include <stack>
+#include <queue>
 #include <string>
 #include <type_traits>
 #include <cassert>
@@ -16,40 +17,47 @@ namespace KHAS {
 		/// </summary>
 		using value_type = std::string;
 
-	private:	
+	private:
 
 		/// <summary>
 		/// 
 		/// </summary>
 		template <typename T>
-		using TISValue_type = std::enable_if_t<std::is_same_v<T, value_type>>;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		static inline std::stack<value_type> buffer_{};
-
-		/// <summary>
-		/// 
-		/// </summary>
-		static inline size_t fieldWidth_{ 120 };
-
-		/// <summary>
-		/// 
-		/// </summary>
-		static void init();
+		using TISValue_type_t = std::enable_if_t<std::is_same_v<T, value_type>>;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		template <typename ...Args>
-		static value_type bufferItem(Args&&... args);
+		static constexpr bool TISValue_type_v = (std::is_same_v<Args, value_type> && ...);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		static inline std::queue<value_type> buffer_{};
+
+		/// <summary>
+		/// 
+		/// </summary>
+		static inline size_t fieldWidth_{ 100 };
+
+		/// <summary>
+		/// 
+		/// </summary>
+		template <typename...Args>
+		static value_type bufferItem(Args&& ...args);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		template <typename Delim, typename = std::enable_if_t<std::is_same_v<Delim, value_type::value_type>>>
+		static value_type delimiter(Delim del);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		template <typename OutType
-			, typename = TISValue_type<OutType>>
+			, typename = TISValue_type_t<OutType>>
 		static OutType addLineTranslation(OutType&& str);
 
 		/// <summary>
@@ -68,6 +76,12 @@ namespace KHAS {
 		/// </summary>
 		static void initMenu();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		template <typename SizeStr, typename Str, typename = TISValue_type_t<Str>>
+		static value_type textAlign(SizeStr size, Str&& str);
+
 	protected:
 
 		/// <summary>
@@ -85,10 +99,15 @@ namespace KHAS {
 		/// </summary>
 		explicit Interface();
 
+		///
+		///
+		/// 
+		~Interface();
+
 		/// <summary>
 		/// 
 		/// </summary>
-		void show();
+		static void show();
 
 
 	};
@@ -128,14 +147,22 @@ namespace KHAS {
 	Interface::value_type Interface
 		::bufferItem(Args&&... args) {
 
-		constexpr bool isSame{ (std::is_same_v<Args
-		, value_type> && ...) };
+		constexpr bool isSame{ TISValue_type_v<Args...> };
 		/// ¬ходные типы не соответствуют типу базы
 		static_assert(isSame, "Input types do not match base type!");
 
 		std::stringstream ss;
-		(ss  <<  ... << addLineTranslation(std::forward<Args>(args)));
-		std::cout << ss.str();
+
+		ss << "# ";
+		auto size_field{ (fieldWidth_ - 4) / sizeof...(Args) };
+
+		( ss << ... << textAlign(size_field, std::forward<Args>(args)));
+
+		size_t rest_width{ fieldWidth_ - ss.str().size() };
+		if (rest_width > 0) ss << std::setw(rest_width) << std::setfill(' ');
+		ss << " #";
+
+		assert(ss.str().size() <= fieldWidth_);
 
 		return ss.str();
 	}
@@ -147,13 +174,36 @@ namespace KHAS {
 		/// ¬ходные типы не соответствуют типу базы
 		static_assert(std::is_same_v<OutType, value_type>, "Input types do not match base type!");
 
-		return std::forward<OutType>(str) + "\n";
+		return std::forward<OutType>(str) + " ";
 	}
 
 	template<typename First, typename ...Rest>
 	inline bool Interface::isValidity(const First& str, const Rest & ...rest)
 	{
 		if constexpr (sizeof...(Rest) == 0) return true;
-		return (str.size() <= (fieldWidth_ - 6)) && isValidity(rest...);
+		return (str.size() <= fieldWidth_) && isValidity(rest...);
+	}
+
+
+	template <typename SizeStr, typename Str, typename T3>
+	Interface::value_type Interface
+		::textAlign(SizeStr size, Str&& str) {
+
+		std::stringstream ss;
+		auto&& str_ss{ std::forward<Str>(str) };
+		size_t even{ str_ss.size() % 2 };
+		assert(str_ss.size() <= size);
+		ss << std::setw((size + str_ss.size()) / 2)
+			<< str_ss << std::setw((size - str_ss.size()) / 2) << "";
+		return ss.str();
+	}
+
+	template <typename Delim, typename T2>
+	static Interface::value_type Interface
+		::delimiter(Delim del) {
+		Interface::value_type str(fieldWidth_, del );
+		str.front() = '#';
+		str.back() = '#';
+		return str;
 	}
 }
