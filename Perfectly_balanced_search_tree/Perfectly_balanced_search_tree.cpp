@@ -8,7 +8,8 @@ int main()
 	setlocale(LC_ALL, "Russian");
 
 	TaskExecution task;
-	task.print100();
+	task.view();
+
 
 	return 0;
 }

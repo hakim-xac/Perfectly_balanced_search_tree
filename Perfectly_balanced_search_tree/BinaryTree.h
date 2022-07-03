@@ -1,30 +1,38 @@
 #pragma once
 
 #include "Node.h"
+#include <sstream>
 
 namespace KHAS {
 
-	class BinaryTree {
+    class BinaryTree {
 
-	private:
-		Node* root_;
-		size_t size_;
+    private:
+        Node* root_;
 
-	private:
+    private:
 
-		void deleteTree(Node* root);
-		void printTree(Node* root) const;
+        static void deleteTree(Node* root)                             ;
+        static std::stringstream printTree(const Node* const root)     ;
+        static int sizeTree(const Node* const root)                    ;
+        static int heightTree(const Node* const root)                  ;
+        static int middleHeightTree(const Node* const root, int level) ;
+        static long long hashTree(const Node* const root)              ;
 
-	public:
-		BinaryTree() = delete;
-		BinaryTree(int value);
-		~BinaryTree();
 
-		bool find(int key) const;
-		void insert(int key);
-		void erase(int key);
-		size_t size() const;
-		void print() const;
+    public:
+        BinaryTree() = delete;
+        BinaryTree(int value);
+        ~BinaryTree();
 
-	};
+        void insert(int key);
+        void erase(int key);
+        bool find(int key)	        const;
+        size_t size()		        const;
+        std::stringstream print()	const;
+        int height()		        const;
+        int middleHeight()	        const;
+        long long hash()	        const;
+
+    };
 }
