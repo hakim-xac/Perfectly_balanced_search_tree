@@ -51,13 +51,21 @@ namespace KHAS {
         if (!root) return 0;
         using out_type = long long;
 
-        out_type sum{ 
+        return (
             static_cast<out_type>(root->data)
             + hashTree(root->left)
-            + hashTree(root->right)
-        };
+            + hashTree(root->right) );
 
-        return sum;
+    }
+
+    bool BinaryTree::isSearchTree(const Node* const root)
+    {
+        if (!root) return false;
+        if ((root->left && root->data <= root->left->data || isSearchTree(root->left))
+            || root->right && (root->data >= root->right->data || !isSearchTree(root->right))) {
+            return false;
+        }
+        return true;
     }
 
     BinaryTree::BinaryTree(int value)
@@ -65,7 +73,7 @@ namespace KHAS {
 
     BinaryTree::~BinaryTree()
     {
-        deleteTree(root_);
+        if(root_) deleteTree(root_);
     }
 
     bool BinaryTree::find(int key) const
@@ -167,5 +175,9 @@ namespace KHAS {
     long long BinaryTree::hash() const
     {
         return hashTree(root_);
+    }
+    bool BinaryTree::isSearch() const
+    {
+        return isSearchTree(root_);
     }
 }

@@ -18,6 +18,7 @@ namespace KHAS {
         static int heightTree(const Node* const root)                  ;
         static int middleHeightTree(const Node* const root, int level) ;
         static long long hashTree(const Node* const root)              ;
+        static bool isSearchTree(const Node* const root)               ;
 
 
     public:
@@ -33,6 +34,7 @@ namespace KHAS {
         int height()		        const;
         int middleHeight()	        const;
         long long hash()	        const;
+        bool isSearch()             const;
 
     };
 }

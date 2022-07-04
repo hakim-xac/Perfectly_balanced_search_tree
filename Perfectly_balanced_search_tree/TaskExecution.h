@@ -9,11 +9,18 @@ namespace KHAS {
         template <typename BTree>
         using isBinaryTree_t = std::enable_if_t<std::is_same_v<BTree, BinaryTree>>;
 
-        BinaryTree* tree100_;
-        BinaryTree* tree200_;
-        BinaryTree* tree300_;
-        BinaryTree* tree400_;
-        BinaryTree* tree500_;
+        BinaryTree* sdpTree100_;
+        BinaryTree* sdpTree200_;
+        BinaryTree* sdpTree300_;
+        BinaryTree* sdpTree400_;
+        BinaryTree* sdpTree500_;
+
+        BinaryTree* isdpTree100_;
+        BinaryTree* isdpTree200_;
+        BinaryTree* isdpTree300_;
+        BinaryTree* isdpTree400_;
+        BinaryTree* isdpTree500_;
+
 
     private:
         /// <summary>
@@ -24,8 +31,13 @@ namespace KHAS {
         /// <summary>
         /// 
         /// </summary>
-        template <typename Str>
-        static void print(Str&& str, const BinaryTree* const tree);
+        bool checkIsTree();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        template <typename BTree, typename = isBinaryTree_t<BTree>>
+        static void print(const BTree* const tree);
 
         /// <summary>
         /// 
@@ -56,10 +68,22 @@ namespace KHAS {
         /// </summary>
         template <typename BTree, typename = isBinaryTree_t<BTree>>
         static void middleHeightTree(const BTree* const tree);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        template <typename BTree, typename = isBinaryTree_t<BTree>>
+        static void searchTree(const BTree* const tree);
+
         /// <summary>
         /// 
         /// </summary>
         BinaryTree* selectTree(int index) const;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        BinaryTree* selectTreeView();
 
         /// <summary>
         /// 
@@ -74,37 +98,17 @@ namespace KHAS {
         /// <summary>
         /// 
         /// </summary>
-        void print100()     const;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void print200()     const;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void print300()     const;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void print400()     const;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void print500()     const;
-
-        /// <summary>
-        /// 
-        /// </summary>
         void findInTree();
 
         /// <summary>
         /// 
         /// </summary>
         void quit()         const;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        void printView();
 
 
 
@@ -117,13 +121,13 @@ namespace KHAS {
 
 
 
-    template<typename Str>
-    inline void TaskExecution::print(Str&& str, const BinaryTree* const tree)
+    template<typename BTree, typename T2>
+    inline void TaskExecution::print(const BTree* const tree)
     {
         using namespace std::literals;
 
         push(delimiter('-'));
-        push(bufferItem(std::forward<Str>(str)));
+        push(bufferItem("Данные о дереве"s));
         push(delimiter('-'));
 
         printTree(tree);
@@ -131,6 +135,7 @@ namespace KHAS {
         hashTree(tree);
         heightTree(tree);
         middleHeightTree(tree);
+        searchTree(tree);
         showStatusBar();
         
     }
@@ -206,6 +211,18 @@ namespace KHAS {
         push(delimiter('='));
         push(bufferItem("Средняя высота дерева:"s
             , std::to_string(tree->middleHeight())));
+        push(delimiter('='));
+    }
+
+    template <typename BTree, typename T2>
+    void TaskExecution
+        ::searchTree(const BTree* const tree) {
+
+        using namespace std::literals;
+
+        push(delimiter('='));
+        push(bufferItem("Является двоичное дерево, деревом поиска :"s
+            , tree->isSearch() ? "ДА"s : "НЕТ"s ));
         push(delimiter('='));
     }
 

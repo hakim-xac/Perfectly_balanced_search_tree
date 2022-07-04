@@ -26,12 +26,8 @@ namespace KHAS {
 
         switch (cmd)
         {
-        case 49: activeCommand_ = InputCommand::Print100;   break; // 1
-        case 50: activeCommand_ = InputCommand::Print200;   break; // 2
-        case 51: activeCommand_ = InputCommand::Print300;   break; // 3
-        case 52: activeCommand_ = InputCommand::Print400;   break; // 4
-        case 53: activeCommand_ = InputCommand::Print500;   break; // 5
-        case 54: activeCommand_ = InputCommand::FindItem;   break; // 6
+        case 49: activeCommand_ = InputCommand::Print;      break; // 1
+        case 50: activeCommand_ = InputCommand::FindItem;   break; // 2
         case 57: activeCommand_ = InputCommand::Exit;       break; // 9
 
         default: activeCommand_ = InputCommand::ErrorCommands;            
