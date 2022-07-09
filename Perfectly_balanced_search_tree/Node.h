@@ -7,10 +7,10 @@ namespace KHAS {
 	public:
 		Node* left{ nullptr };
 		Node* right{ nullptr };
-		int data{};
+		int* data{ nullptr };
 
 
-		Node(int value)
+		Node(int* value)
 			: left(nullptr)
 			, right(nullptr)
 			, data(value) {}

@@ -1,5 +1,8 @@
 #include "BinaryTree.h"
 #include <iostream>
+#include <iterator>
+#include <algorithm>
+#include <random>
 
 
 namespace KHAS {
@@ -13,13 +16,13 @@ namespace KHAS {
         }
     }
 
-    std::stringstream BinaryTree::printTree(const Node* const root)
+    std::stringstream BinaryTree::readTree(const Node* const root)
     {
         if (!root) return std::stringstream{};
         std::stringstream ss;
-        ss << printTree(root->left).str();
-        ss << root->data << " ";
-        ss << printTree(root->right).str();
+        ss << readTree(root->left).str();
+        ss << *(root->data) << " ";
+        ss << readTree(root->right).str();
         return ss;
     }
 
@@ -52,7 +55,7 @@ namespace KHAS {
         using out_type = long long;
 
         return (
-            static_cast<out_type>(root->data)
+            static_cast<out_type>(*(root->data))
             + hashTree(root->left)
             + hashTree(root->right) );
 
@@ -60,16 +63,108 @@ namespace KHAS {
 
     bool BinaryTree::isSearchTree(const Node* const root)
     {
-        if (!root) return false;
-        if ((root->left && root->data <= root->left->data || isSearchTree(root->left))
-            || root->right && (root->data >= root->right->data || !isSearchTree(root->right))) {
+        if(root && ((root->left && (*(root->data) <= *(root->left->data) || isSearchTree(root->left)))
+            || (root->right && (*(root->data) >= *(root->right->data) || !isSearchTree(root->right)))
+            )){
             return false;
         }
         return true;
     }
 
-    BinaryTree::BinaryTree(int value)
-        : root_(new (std::nothrow) Node(value)) {}
+    bool BinaryTree::toSDP()
+    {
+        if (vec_buffer_.size() == 0) return false;
+
+        root_ = new (std::nothrow) Node(&vec_buffer_[0]);
+
+        for (size_t i{}, ie{ vec_buffer_.size() }; i != ie; ++i) {
+            insert(vec_buffer_[i]);            
+        }
+        return true;
+    }
+
+    Node* BinaryTree::toISDP(std::vector<int>& vec, int left, int right)
+    {
+        if (left > right) return nullptr;
+        int middle{ left + (right - left) / 2 };
+        int size{ static_cast<int>(vec.size()) };
+        if (middle >= size || middle < 0) return nullptr;
+        Node* nd{ new (std::nothrow) Node(&vec[middle]) };
+        if (!nd) return nullptr;
+        nd->left = toISDP(vec, left, middle - 1);
+        nd->right = toISDP(vec, middle + 1, right);
+        return nd;
+        
+    }
+
+    bool BinaryTree::fillVector(int size)
+    {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution dist(-10000000, 10000000);
+        
+        for (int i{}, ie{ size }; i != ie; ++i) {
+            vec_buffer_.emplace_back(dist(gen));
+        }
+
+        if (vec_buffer_.size() != size) {
+            return false;
+        }
+        return true;
+    }
+
+    void BinaryTree::insert(int& key)
+    {
+        Node* it{ root_ };
+        while (it && *(it->data) != key)
+        {
+            if (*(it->data) > key && it->left == nullptr)
+            {
+                it->left = new (std::nothrow) Node(&key);
+                break;
+            }
+
+            if (*(it->data) < key && it->right == nullptr)
+            {
+                it->right = new (std::nothrow) Node(&key);
+                break;
+            }
+
+            if (*(it->data) > key)  it = it->left;
+            else				    it = it->right;
+        }
+    }
+
+    BinaryTree::BinaryTree(int size)
+        : vec_buffer_()
+        , root_(nullptr)
+        , typeTree_(TypeTree::SDP) {
+
+        vec_buffer_.reserve(size);
+
+        if (!fillVector(size)) {
+            std::cout << "ньхайю! мебнглнфмн янгдюрэ аюгс! " << std::endl;
+            system("pause");
+        }
+
+        if (!toSDP()) {
+            std::cout << "ньхайю! мебнглнфмн янгдюрэ депебн! " << std::endl;
+            system("pause");
+        }
+
+    }
+
+    BinaryTree::BinaryTree(BinaryTree* bt)
+        : vec_buffer_()
+        , root_(nullptr)
+        , typeTree_(TypeTree::ISDP) {
+
+        if (bt == this) return;
+
+        vec_buffer_ = bt->vec_buffer_;
+
+        root_ = toISDP(vec_buffer_, 0, static_cast<int>(vec_buffer_.size()));
+    }
 
     BinaryTree::~BinaryTree()
     {
@@ -80,76 +175,11 @@ namespace KHAS {
     {
         Node* it{ root_ };
 
-        while (it && it->data != key) {
-            if (it->data > key)		it = it->left;
+        while (it && *(it->data) != key) {
+            if (*(it->data) > key)	it = it->left;
             else					it = it->right;
         }
         return it != nullptr;
-    }
-
-    void BinaryTree::insert(int key)
-    {
-        Node* it{ root_ };
-
-        while (it && it->data != key)
-        {
-            if (it->data > key && it->left == nullptr)
-            {
-                it->left = new (std::nothrow) Node(key);
-                return;
-            }
-
-            if (it->data < key && it->right == nullptr)
-            {
-                it->right = new (std::nothrow) Node(key);
-                return;
-            }
-
-            if (it->data > key)		it = it->left;
-            else					it = it->right;
-        }
-    }
-
-    void BinaryTree::erase(int key)
-    {
-        Node* it{ root_ };
-        Node* parent{ nullptr };
-
-        while (it && it->data != key) {
-            parent = it;
-            if (it->data > key)	it = it->left;
-            else				it = it->right;
-        }
-
-        if (!it) return;
-
-        if (it->left == nullptr) {
-
-            if(parent && parent->left == it)	parent->left = it->right;
-            if(parent && parent->right == it)	parent->right = it->right;
-
-            delete it;
-            return;
-        }
-
-        if (it->right == nullptr) {
-
-            if (parent && parent->left == it)	parent->left = it->left;
-            if (parent && parent->right == it)	parent->right = it->left;
-
-            delete it;
-            return;
-        }
-
-        Node* replace{ it->right };
-
-        while (replace->left) {
-            replace = replace->left;
-        }
-
-        int replace_value{ replace->data };
-        erase(replace_value);
-        it->data = replace_value;
     }
 
     size_t BinaryTree::size() const
@@ -159,7 +189,7 @@ namespace KHAS {
 
     std::stringstream BinaryTree::print() const
     {        
-        return printTree(root_);
+        return readTree(root_);
     }
 
     int BinaryTree::height() const
@@ -176,8 +206,13 @@ namespace KHAS {
     {
         return hashTree(root_);
     }
+
     bool BinaryTree::isSearch() const
     {
         return isSearchTree(root_);
+    }
+    void BinaryTree::deleteTree()
+    {
+        deleteTree(root_);
     }
 }

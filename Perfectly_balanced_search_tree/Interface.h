@@ -257,11 +257,16 @@ namespace KHAS {
         ::textAlign(SizeStr size, Str&& str) {
 
         std::stringstream ss;
+
         auto&& str_ss{ std::forward<Str>(str) };
+
         size_t even{ str_ss.size() % 2 };
+
         assert(str_ss.size() <= size);
+
         ss << std::setw((size + str_ss.size()) / 2)
             << str_ss << std::setw((size - str_ss.size()) / 2) << "";
+
         return ss.str();
     }
 

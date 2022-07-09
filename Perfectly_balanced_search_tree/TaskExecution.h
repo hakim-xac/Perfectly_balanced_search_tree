@@ -1,6 +1,7 @@
 #pragma once
 #include "Interface.h"
 #include "BinaryTree.h"
+#include "Enums.h"
 
 namespace KHAS {
 
@@ -23,10 +24,11 @@ namespace KHAS {
 
 
     private:
+
         /// <summary>
         /// 
         /// </summary>
-        static BinaryTree* create(int count_tree);
+        static std::pair<BinaryTree*, BinaryTree*> create(int count_tree);
 
         /// <summary>
         /// 
@@ -43,7 +45,7 @@ namespace KHAS {
         /// 
         /// </summary>
         template <typename BTree, typename = isBinaryTree_t<BTree>>
-        static void printTree(const BTree* const tree);
+        static void readTree(const BTree* const tree);
 
         /// <summary>
         /// 
@@ -93,11 +95,6 @@ namespace KHAS {
         /// <summary>
         /// 
         /// </summary>
-        void space()        const;
-
-        /// <summary>
-        /// 
-        /// </summary>
         void findInTree();
 
         /// <summary>
@@ -130,7 +127,7 @@ namespace KHAS {
         push(bufferItem("Данные о дереве"s));
         push(delimiter('-'));
 
-        printTree(tree);
+        readTree(tree);
         sizeTree(tree);
         hashTree(tree);
         heightTree(tree);
@@ -141,11 +138,11 @@ namespace KHAS {
     }
 
     template<typename BTree, typename T2>
-    inline void TaskExecution::printTree(const BTree* const tree)
+    inline void TaskExecution::readTree(const BTree* const tree)
     {
         using namespace std::literals;
 
-        auto&& ss{ tree->print() };
+        std::stringstream ss{ tree->print() };
 
         push(delimiter('='));
         push(bufferItem("Вывод дерева"s));

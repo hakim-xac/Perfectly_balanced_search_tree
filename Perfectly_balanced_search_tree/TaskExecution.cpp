@@ -1,30 +1,31 @@
 #include "TaskExecution.h"
-#include <random>
 
 namespace KHAS {
-
-    BinaryTree* TaskExecution::create(int count_tree)
+    std::pair<BinaryTree*, BinaryTree*> TaskExecution::create(int count_tree)
     {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution dist(-1000000, 1000000);
+                
+        BinaryTree* sdpTree{ new (std::nothrow) BinaryTree(count_tree) };
 
-        BinaryTree * temp_tree{ new (std::nothrow) BinaryTree(dist(gen)) };
-        if (!temp_tree) return nullptr;
-        for (int i{ 1 }; i < count_tree; ++i) {
-            temp_tree->insert(dist(gen));
+        if (!sdpTree) return { nullptr, nullptr };
+
+        BinaryTree* isdpTree{ new (std::nothrow) BinaryTree(sdpTree) };
+
+        if (!isdpTree) {
+            sdpTree->deleteTree();
+            return { nullptr, nullptr };
         }
-        
-        return temp_tree;
+
+        return { sdpTree, isdpTree };
     }
 
     bool TaskExecution::checkIsTree()
     {
-        return (sdpTree100_ != nullptr
-            && sdpTree200_ != nullptr
-            && sdpTree300_ != nullptr
-            && sdpTree400_ != nullptr
-            && sdpTree500_ != nullptr);
+        return (sdpTree100_ != nullptr && sdpTree200_ != nullptr
+            && sdpTree300_ != nullptr && sdpTree400_ != nullptr
+            && sdpTree500_ != nullptr && isdpTree100_ != nullptr
+            && isdpTree200_ != nullptr && isdpTree300_ != nullptr
+            && isdpTree400_ != nullptr && isdpTree500_ != nullptr
+            );
     }
 
     BinaryTree* TaskExecution::selectTree(int index) const
@@ -36,6 +37,11 @@ namespace KHAS {
         case 3:     bt = sdpTree300_;  break;
         case 4:     bt = sdpTree400_;  break;
         case 5:     bt = sdpTree500_;  break;
+        case 6:     bt = isdpTree100_;  break;
+        case 7:     bt = isdpTree200_;  break;
+        case 8:     bt = isdpTree300_;  break;
+        case 9:     bt = isdpTree400_;  break;
+        case 0:     bt = isdpTree500_;  break;
         default:    bt = nullptr;
         }
         return bt;
@@ -56,13 +62,19 @@ namespace KHAS {
                 std::cin.get();
             }
             push(delimiter('-'));
-            push(bufferItem("Введите число от 1 до 5, в каком дереве хотим искать:"s));
+            push(bufferItem("Введите число от 0 до 9, в каком дереве хотим искать:"s));
             push(delimiter('-'));
-            push(bufferItem("1 -"s, "дерево размером в 100 элементов"s));
-            push(bufferItem("2 -"s, "дерево размером в 200 элементов"s));
-            push(bufferItem("3 -"s, "дерево размером в 300 элементов"s));
-            push(bufferItem("4 -"s, "дерево размером в 400 элементов"s));
-            push(bufferItem("5 -"s, "дерево размером в 500 элементов"s));
+            push(bufferItem("1 -"s, "СДП дерево размером в 100 элементов"s));
+            push(bufferItem("2 -"s, "СДП дерево размером в 200 элементов"s));
+            push(bufferItem("3 -"s, "СДП дерево размером в 300 элементов"s));
+            push(bufferItem("4 -"s, "СДП дерево размером в 400 элементов"s));
+            push(bufferItem("5 -"s, "СДП дерево размером в 500 элементов"s));
+            push(delimiter('-'));
+            push(bufferItem("6 -"s, "ИСДП дерево размером в 100 элементов"s));
+            push(bufferItem("7 -"s, "ИСДП дерево размером в 200 элементов"s));
+            push(bufferItem("8 -"s, "ИСДП дерево размером в 300 элементов"s));
+            push(bufferItem("9 -"s, "ИСДП дерево размером в 400 элементов"s));
+            push(bufferItem("0 -"s, "ИСДП дерево размером в 500 элементов"s));
             push(delimiter('-'));
             showStatusBar();
             std::cin >> index;
@@ -94,24 +106,49 @@ namespace KHAS {
     TaskExecution
         ::TaskExecution()
     : Interface()
-    , sdpTree100_(create(100))
-    , sdpTree200_(create(200))
-    , sdpTree300_(create(300))
-    , sdpTree400_(create(400))
-    , sdpTree500_(create(500))	{}
+    , sdpTree100_(nullptr), sdpTree200_(nullptr)
+    , sdpTree300_(nullptr), sdpTree400_(nullptr)
+    , sdpTree500_(nullptr), isdpTree100_(nullptr)
+    , isdpTree200_(nullptr), isdpTree300_(nullptr)
+    , isdpTree400_(nullptr), isdpTree500_(nullptr) {
+
+        std::tie(sdpTree100_, isdpTree100_) = create(100);
+        std::tie(sdpTree200_, isdpTree200_) = create(200);
+        std::tie(sdpTree300_, isdpTree300_) = create(300);
+        std::tie(sdpTree400_, isdpTree400_) = create(400);
+        std::tie(sdpTree500_, isdpTree500_) = create(500);
+
+    }
 
     TaskExecution::~TaskExecution()
     {
-        delete sdpTree100_;
-        delete sdpTree200_;
-        delete sdpTree300_;
-        delete sdpTree400_;
-        delete sdpTree500_;
-    }
+        sdpTree100_->deleteTree();
+        sdpTree200_->deleteTree();
+        sdpTree300_->deleteTree();
+        sdpTree400_->deleteTree();
+        sdpTree500_->deleteTree();
+        isdpTree100_->deleteTree();
+        isdpTree200_->deleteTree();
+        isdpTree300_->deleteTree();
+        isdpTree400_->deleteTree();
+        isdpTree500_->deleteTree();
 
-    void TaskExecution::space() const
-    {
-        pushToBuffer(delimiter(' '));
+        delete sdpTree100_;     delete sdpTree200_;
+        delete sdpTree300_;     delete sdpTree400_;
+        delete sdpTree500_;     delete isdpTree100_;
+        delete isdpTree200_;    delete isdpTree300_;
+        delete isdpTree400_;    delete isdpTree500_;
+
+        sdpTree100_ = nullptr;
+        sdpTree200_ = nullptr;
+        sdpTree300_ = nullptr;
+        sdpTree400_ = nullptr;
+        sdpTree500_ = nullptr;
+        isdpTree100_ = nullptr;
+        isdpTree200_ = nullptr;
+        isdpTree300_ = nullptr;
+        isdpTree400_ = nullptr;
+        isdpTree500_ = nullptr;
     }
 
     void TaskExecution::findInTree()
