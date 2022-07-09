@@ -7,7 +7,10 @@ int main()
 
 	setlocale(LC_ALL, "Russian");
 
+	// Выполняем нашу задачу. Лабораторная работа номер 1.
 	TaskExecution task;
+
+	// Выполняем функцию отображения на экран консоли
 	task.view();
 
 

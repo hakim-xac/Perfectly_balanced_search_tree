@@ -5,8 +5,14 @@ namespace KHAS {
 	class Node {
 
 	public:
+
+		// указатель на левое дерево
 		Node* left{ nullptr };
+
+		// указатель на правое дерево
 		Node* right{ nullptr };
+
+		// данные
 		int data{};
 
 

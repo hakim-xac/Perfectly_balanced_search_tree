@@ -83,22 +83,22 @@ namespace KHAS {
         return true;
     }
 
-    Node* BinaryTree::toISDP(std::vector<int>& vec, int left, int right)
+    Node* BinaryTree::toISDP(int left, int right)
     {
         if (left > right) return nullptr;
 
-        int size{ static_cast<int>(vec.size()) };
+        int size{ static_cast<int>(vec_buffer_.size()) };
 
         if (size == 0) return nullptr;
         if (right >= size || left < 0) return nullptr;
 
         int middle{ left + ((right - left) / 2) };
 
-        Node* nd{ new (std::nothrow) Node(vec[middle]) };
+        Node* nd{ new (std::nothrow) Node(vec_buffer_[middle]) };
         if (!nd) return nullptr;
 
-        nd->left = toISDP(vec, left, middle - 1);
-        nd->right = toISDP(vec, middle + 1, right);
+        nd->left = toISDP(left, middle - 1);
+        nd->right = toISDP(middle + 1, right);
         return nd;
 
     }
@@ -137,7 +137,7 @@ namespace KHAS {
             }
 
             if (it->data > key)  it = it->left;
-            else				    it = it->right;
+            else				 it = it->right;
         }
     }
 
@@ -169,7 +169,7 @@ namespace KHAS {
 
         vec_buffer_ = bt->vec_buffer_;
 
-        root_ = toISDP(vec_buffer_, 0, static_cast<int>(vec_buffer_.size() - 1));
+        root_ = toISDP(0, static_cast<int>(vec_buffer_.size() - 1));
     }
 
     BinaryTree::~BinaryTree()

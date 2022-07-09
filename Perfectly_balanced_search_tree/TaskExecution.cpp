@@ -88,18 +88,22 @@ namespace KHAS {
 
     void TaskExecution::functionLaunch()
     {
+        // провер€ет созданные деревь€ на валидность
         if (!checkIsTree()) {
             system("cls");
             std::cout << "¬нимание! не удалось выделить пам€ть из кучи под данные!";
             exit(1);
         }
 
+        // выполн€ет определенную пользователем команду
         switch (getActiveCommand()) {
         case InputCommand::Print:       printView();    break;
         case InputCommand::FindItem:    findInTree();   break;
         case InputCommand::Exit:        quit();         break;
         default: break;
         }
+
+        // очистка команды
         clearActiveCommand();
     }
 
@@ -112,6 +116,7 @@ namespace KHAS {
     , isdpTree200_(nullptr), isdpTree300_(nullptr)
     , isdpTree400_(nullptr), isdpTree500_(nullptr) {
 
+        // создает необходимые деревь€
         std::tie(sdpTree100_, isdpTree100_) = create(100);
         std::tie(sdpTree200_, isdpTree200_) = create(200);
         std::tie(sdpTree300_, isdpTree300_) = create(300);
@@ -122,6 +127,7 @@ namespace KHAS {
 
     TaskExecution::~TaskExecution()
     {
+        // очищает деревь€ и обнул€ет указатели
         sdpTree100_->deleteTree();
         sdpTree200_->deleteTree();
         sdpTree300_->deleteTree();
@@ -201,6 +207,7 @@ namespace KHAS {
     {
         using namespace std::literals;
 
+        // добавл€ет отформатированные строки в буфер
         pushToBuffer(delimiter('='));
         pushToBuffer(bufferItem("ћеню"s));
         pushToBuffer(delimiter('-'));
@@ -212,6 +219,8 @@ namespace KHAS {
         pushToBuffer(delimiter('-'));
         pushToBuffer(bufferItem("9"s, "«акрыть приложение"s));
         pushToBuffer(delimiter('='));
+
+        // сбрасывает на вывод в консоль
         show();
     }
 

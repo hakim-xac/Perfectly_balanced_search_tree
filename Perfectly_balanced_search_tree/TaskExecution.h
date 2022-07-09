@@ -26,84 +26,84 @@ namespace KHAS {
     private:
 
         /// <summary>
-        /// 
+        /// создает дерево с количеством элементов count_tree
         /// </summary>
         static std::pair<BinaryTree*, BinaryTree*> create(int count_tree);
 
         /// <summary>
-        /// 
+        /// проверяет на валидность созданные деревья
         /// </summary>
         bool checkIsTree();
 
         /// <summary>
-        /// 
+        /// выводит, необходимый по условию задачи, результат в буфер
         /// </summary>
         template <typename BTree, typename = isBinaryTree_t<BTree>>
         static void print(const BTree* const tree);
 
         /// <summary>
-        /// 
+        /// считывает дерево и добовляет данные в буфер
         /// </summary>
         template <typename BTree, typename = isBinaryTree_t<BTree>>
         static void readTree(const BTree* const tree);
 
         /// <summary>
-        /// 
+        /// считает хеш-сумму и выводит в буфер
         /// </summary>
         template <typename BTree, typename = isBinaryTree_t<BTree>>
         static void hashTree(const BTree* const tree);
 
         /// <summary>
-        /// 
+        /// считает высоту дерева и выводит в буфер
         /// </summary>
         template <typename BTree, typename = isBinaryTree_t<BTree>>
         static void heightTree(const BTree* const tree);
 
         /// <summary>
-        /// 
+        /// считает размер дерева
         /// </summary>
         template <typename BTree, typename = isBinaryTree_t<BTree>>
         static void sizeTree(const BTree* const tree);
 
         /// <summary>
-        /// 
+        /// считает среднюю высоту дерева
         /// </summary>
         template <typename BTree, typename = isBinaryTree_t<BTree>>
         static void middleHeightTree(const BTree* const tree);
 
         /// <summary>
-        /// 
+        /// определяет, является двоичное дерево, деревом поиска
         /// </summary>
         template <typename BTree, typename = isBinaryTree_t<BTree>>
         static void searchTree(const BTree* const tree);
 
         /// <summary>
-        /// 
+        /// выбирает дерево по индексу
         /// </summary>
         BinaryTree* selectTree(int index) const;
 
         /// <summary>
-        /// 
+        /// меню выбора дерева
         /// </summary>
         BinaryTree* selectTreeView();
 
         /// <summary>
-        /// 
+        /// выполняет функцию, в зависимости от команды
         /// </summary>
         void functionLaunch() override;
 
         /// <summary>
-        /// 
+        /// запрашивает число, затем ищет его в выбранном дереве и выводит результат
         /// </summary>
         void findInTree();
 
         /// <summary>
-        /// 
+        /// выходит из программы
         /// </summary>
         void quit()         const;
 
         /// <summary>
-        /// 
+        /// добавляет данные о дереве в буфер
         /// </summary>
         void printView();
 
