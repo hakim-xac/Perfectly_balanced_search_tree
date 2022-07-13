@@ -52,7 +52,7 @@ namespace KHAS {
         bool fillVector(int size)                                      ;
 
         // добавляет ключ в дерево
-        void insert(int& key)                                          ;
+        void insert(int key)                                           ;
 
     public:
 
