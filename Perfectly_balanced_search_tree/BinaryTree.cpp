@@ -107,11 +107,19 @@ namespace KHAS {
     {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution dist(-10000000, 10000000);
+        std::uniform_int_distribution dist(-10000, 10000);
         
+
+
         for (int i{}, ie{ size }; i != ie; ++i) {
-            vec_buffer_.emplace_back(dist(gen));
-        }
+
+            auto tmp{ dist(gen) };
+            while (std::find(vec_buffer_.begin(), vec_buffer_.end(), tmp) != vec_buffer_.end()) {
+                tmp = dist(gen);
+            }
+            vec_buffer_.emplace_back(tmp);
+        }     
+
 
         if (vec_buffer_.size() != size) {
             return false;
@@ -119,7 +127,7 @@ namespace KHAS {
         return true;
     }
 
-    void BinaryTree::insert(int& key)
+    void BinaryTree::insert(int key)
     {
         Node* it{ root_ };
         while (it && it->data != key)
@@ -151,11 +159,13 @@ namespace KHAS {
         if (!fillVector(size)) {
             std::cout << "ньхайю! мебнглнфмн янгдюрэ аюгс! " << std::endl;
             system("pause");
+            exit(1);
         }
 
         if (!toSDP()) {
             std::cout << "ньхайю! мебнглнфмн янгдюрэ депебн! " << std::endl;
             system("pause");
+            exit(1);
         }
 
     }
